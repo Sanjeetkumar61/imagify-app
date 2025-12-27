@@ -35,7 +35,7 @@ const Result = () => {
       transition={{ duration: 1 }}
     >
       <div className="pb-4">
-        <img src={image} alt="" className="max-w-sm rounded" />
+        <img src={image} alt="" className=" w-full max-w-md sm:max-w-lg md:max-w-xl h-auto max-h-[70vh] object-contain rounded-xl" />
         {loading && <p className="mt-2 text-sm">Loading...</p>}
       </div>
 
