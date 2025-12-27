@@ -1,65 +1,74 @@
-import axios from 'axios';
+
+import axios from "axios";
 import userModel from "../models/userModel.js";
-import FormData from 'form-data';
+import FormData from "form-data";
 
 export const generateImage = async (req, res) => {
   try {
-    const { prompt } = req.body;     // ✅ frontend se prompt lo
-    const userId = req.userId;       // ✅ middleware se user id lo
+    const { prompt } = req.body;
+
+
+    const userId = req.user.id;
 
     if (!prompt) {
-      return res.json({ success: false, message: 'Prompt is required' });
-    }
-    if (!userId) {
-      return res.json({ success: false, message: 'User not authenticated' });
+      return res.json({ success: false, message: "Prompt is required" });
     }
 
+    if (!userId) {
+      return res.json({ success: false, message: "User not authenticated" });
+    }
 
     const user = await userModel.findById(userId);
-    if (!user) {
-      return res.json({ success: false, message: 'User not found' });
-    }
 
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
 
     if (user.creditBalance <= 0) {
-      return res.json({ success: false, message: 'No Credit Balance', creditBalance: user.creditBalance });
+      return res.json({
+        success: false,
+        message: "No Credit Balance",
+        creditBalance: user.creditBalance,
+      });
     }
 
-    //API Call
+
     const formData = new FormData();
-    formData.append('prompt', prompt);
+    formData.append("prompt", prompt);
 
     const { data } = await axios.post(
-      'https://clipdrop-api.co/text-to-image/v1',
+      "https://clipdrop-api.co/text-to-image/v1",
       formData,
       {
         headers: {
-          'x-api-key': process.env.CLIPDROP_API,
-          ...formData.getHeaders()
+          "x-api-key": process.env.CLIPDROP_API,
+          ...formData.getHeaders(),
         },
-        responseType: 'arraybuffer'
+        responseType: "arraybuffer",
       }
     );
 
-    // ✅ Convert to Base64
-    const base64Image = Buffer.from(data, 'binary').toString('base64');
+
+    const base64Image = Buffer.from(data, "binary").toString("base64");
     const resultImage = `data:image/png;base64,${base64Image}`;
 
-    // ✅ Update Credits
+
     await userModel.findByIdAndUpdate(user._id, {
-      creditBalance: user.creditBalance - 1
+      creditBalance: user.creditBalance - 1,
     });
 
     res.json({
       success: true,
       message: "Image Generated",
       creditBalance: user.creditBalance - 1,
-      resultImage
+      resultImage,
     });
 
   } catch (error) {
     console.error("Image Error:", error.response?.data || error.message);
-    res.json({ success: false, message: "Failed to generate image. Please try again." });
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate image. Please try again.",
+    });
   }
 };
-
