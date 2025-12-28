@@ -6,7 +6,7 @@ Imagify is a full-stack AI-powered image generation web application that allows 
 
 ## 🚀 Live Links
 
-- **Frontend:** https://imagify-app.vercel.app  
+- **Frontend:** https://imagify-app-sandy.vercel.app
 - **Backend API:** https://imagify-app-backend-kwqx.onrender.com  
 
 ---
