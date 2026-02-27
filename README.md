@@ -24,7 +24,6 @@ Imagify is a full-stack AI-powered image generation web application that allows 
 - Error handling and validations
 - Cloud-ready deployment
 
----
 
 ## 🛠️ Tech Stack
 
